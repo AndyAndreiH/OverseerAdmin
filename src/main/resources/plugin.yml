@@ -1,0 +1,20 @@
+name: OverseerAdmin
+author: AndyAndreiH
+authors: [Migs84]
+website: http://katgamestudios.com/
+main: com.katgamestudios.andyandreih.overseer.admin.OverseerAdmin
+version: 0.0.1-SNAPSHOT
+depend: [OverseerMain]
+database: false
+commands:
+   tp:
+      description: Teleports the user
+      usage: /tp <sourceUser> <destinationUser/destinationLocation>
+permissions:
+   overseer.admin.*:
+      description: Master permission node
+      children:
+         overseer.auth.tp: true
+   overseer.admin.tp:
+      description: Gives access to the teleportation command
+      default: op
