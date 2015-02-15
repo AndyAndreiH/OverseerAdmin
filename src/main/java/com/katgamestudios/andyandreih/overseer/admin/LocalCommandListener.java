@@ -29,7 +29,7 @@ public class LocalCommandListener implements CommandExecutor {
                             e.printStackTrace();
                         }
                         Player src = mainClass.getServer().getPlayer(userUUIDsrc);
-                        if(src.isOnline()) {
+                        if(src != null) {
                             UUID userUUIDdst = null;
                             try {
                                 userUUIDdst = UUIDFetcher.getUUIDOf(args[1]);
@@ -37,7 +37,7 @@ public class LocalCommandListener implements CommandExecutor {
                                 e.printStackTrace();
                             }
                             Player dst = mainClass.getServer().getPlayer(userUUIDdst);
-                            if(dst.isOnline()) {
+                            if(dst != null) {
                                 Location dstLocation = dst.getLocation();
                                 src.teleport(dstLocation);
                                 mainClass.dbCtrl.logAdminCommand(player.getDisplayName(), "tp " + args[0] + " " + args[1]);
@@ -63,6 +63,85 @@ public class LocalCommandListener implements CommandExecutor {
                     }
                 } else {
                     player.sendMessage(adminPrefix + ChatColor.RED + "SYNTAX: /tp <srcPlayer> <dstPlayer/dstLocation>");
+                    return true;
+                }
+            } else {
+                sender.sendMessage(adminPrefix + ChatColor.WHITE + "This command can only be executed by players!");
+                return true;
+            }
+        } else if(cmd.getName().equalsIgnoreCase("freeze")) {
+            if(sender instanceof Player) {
+                Player player = (Player) sender;
+                if(args.length == 1) {
+                    UUID userUUID = null;
+                    try {
+                        userUUID = UUIDFetcher.getUUIDOf(args[0]);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Player plr = mainClass.getServer().getPlayer(userUUID);
+                    if(plr != null) {
+                        if(!mainClass.frozenPlayers.containsKey(plr)) {
+                            mainClass.frozenPlayers.put(plr, plr.getLocation());
+                            plr.sendMessage(adminPrefix + "You have been frozen by " + ChatColor.GOLD + player.getDisplayName());
+                            player.sendMessage(adminPrefix + "You have frozen " + ChatColor.GOLD + args[0]);
+                            for (Player p : mainClass.getServer().getOnlinePlayers()) {
+                                if (p.isOp()) {
+                                    p.sendMessage(ChatColor.DARK_RED + "[OP] " + adminPrefix + ChatColor.GOLD +
+                                            player.getDisplayName() + ChatColor.DARK_RED + " has frozen " + args[0]);
+                                }
+                            }
+                            mainClass.dbCtrl.logAdminCommand(player.getDisplayName(), "freeze " + args[0]);
+                            return true;
+                        } else {
+                            player.sendMessage(adminPrefix + ChatColor.GOLD + args[0] + ChatColor.GRAY + " is already frozen");
+                        }
+                    } else {
+                        player.sendMessage(adminPrefix + ChatColor.GOLD + args[0] + ChatColor.GRAY + " is not online");
+                        return true;
+                    }
+                } else {
+                    player.sendMessage(adminPrefix + ChatColor.RED + "SYNTAX: /freeze <player>");
+                    return true;
+                }
+            } else {
+                sender.sendMessage(adminPrefix + ChatColor.WHITE + "This command can only be executed by players!");
+                return true;
+            }
+        } else if(cmd.getName().equalsIgnoreCase("unfreeze")) {
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+                if (args.length == 1) {
+                    UUID userUUID = null;
+                    try {
+                        userUUID = UUIDFetcher.getUUIDOf(args[0]);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Player plr = mainClass.getServer().getPlayer(userUUID);
+                    if (plr != null) {
+                        if(mainClass.frozenPlayers.containsKey(plr)) {
+                            mainClass.frozenPlayers.remove(plr);
+                            plr.sendMessage(adminPrefix + "You have been unfrozen by " + ChatColor.GOLD + player.getDisplayName());
+                            player.sendMessage(adminPrefix + "You have unfrozen " + ChatColor.GOLD + args[0]);
+                            for (Player p : mainClass.getServer().getOnlinePlayers()) {
+                                if (p.isOp()) {
+                                    p.sendMessage(ChatColor.DARK_RED + "[OP] " + adminPrefix + ChatColor.GOLD +
+                                            player.getDisplayName() + ChatColor.DARK_RED + " has unfrozen " + args[0]);
+                                }
+                            }
+                            mainClass.dbCtrl.logAdminCommand(player.getDisplayName(), "unfreeze " + args[0]);
+                            return true;
+                        } else {
+                            player.sendMessage(adminPrefix + ChatColor.GOLD + args[0] + ChatColor.GRAY + " is not frozen");
+                            return true;
+                        }
+                    } else {
+                        player.sendMessage(adminPrefix + ChatColor.GOLD + args[0] + ChatColor.GRAY + " is not online");
+                        return true;
+                    }
+                } else {
+                    player.sendMessage(adminPrefix + ChatColor.RED + "SYNTAX: /unfreeze <player>");
                     return true;
                 }
             } else {
