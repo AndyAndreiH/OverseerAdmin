@@ -22,6 +22,8 @@ public class OverseerAdmin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(eventListen, this);
 
         getCommand("tp").setExecutor(cmdExec);
+        getCommand("freeze").setExecutor(cmdExec);
+        getCommand("unfreeze").setExecutor(cmdExec);
 
         dbCtrl.initDb(OverseerMain.dataFolder);
         dbCtrl.openDb();

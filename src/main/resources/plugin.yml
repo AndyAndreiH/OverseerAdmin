@@ -3,7 +3,7 @@ author: AndyAndreiH
 authors: [Migs84]
 website: http://katgamestudios.com/
 main: com.katgamestudios.andyandreih.overseer.admin.OverseerAdmin
-version: 0.0.3-SNAPSHOT
+version: 0.1
 depend: [OverseerMain]
 database: false
 commands:
@@ -19,21 +19,25 @@ commands:
 permissions:
    overseer.admin.*:
       description: Master permission node
+      default: false
       children:
+         overseer.admin.adminchannel: true
          overseer.admin.tp: true
          overseer.admin.freeze: true
          overseer.admin.unfreeze: true
+         overseer.admin.unfreeze.self: true
+   overseer.admin.adminchannel:
+      description: Gives access to the admin message channel
+      default: false
    overseer.admin.tp:
       description: Gives access to the teleportation command
-      default: op
+      default: false
    overseer.admin.freeze:
       description: Gives access to the freezing command
-      default: op
+      default: false
    overseer.admin.unfreeze:
       description: Gives access to the unfreezing command
-      default: op
-      children:
-         overseer.admin.unfreeze.self: true
+      default: false
    overseer.admin.unfreeze.self:
       description: Allows the player to unfreeze self
-      default: op
+      default: false
